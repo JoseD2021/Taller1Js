@@ -22,33 +22,36 @@ async function normalizar() {
         for (let i=0; i<urls.length; i+=5) {
             let tempResponses = await Promise.all(urls.slice(i, i+5).map(url => fetch(url).then(r => r.json()))); // Array con 5 respuestas, volvemos a json enseguida
             responses.push(...tempResponses); // Los 3 puntos desempaqueta el array y queda aplanado
+            if (i+5 >= urls.length) {
+                console.log(`[i] Parseado ${urls.length}/${urls.length}`);
+                break;
+            }
             console.log(`[i] Parseado: ${i+5}/${urls.length}`)
-            await sleep(1000);
+            await sleep(1700);
         }
         
-        let characters = [];
         // Responses son las paginas (42), results es el array de objetos por pagina
-        for (let r of responses) {
-            for (let objData of r.results) {
-                const character = {
-                    id                : objData.id,
-                    nombre            : objData.name,
-                    estado            : objData.status,
-                    especie           : objData.species,
-                    tipo              : objData.type,
-                    genero            : objData.gender,
-                    origen            : objData.origin?.name,
-                    ubicacionActual   : objData.location?.name,
-                    cantidadEpisodios : objData.episode.length,
-                    imagen            : objData.image
-                }
-                characters.push(character);
-            }
-        }
-        console.log(characters);
+        const characters = responses.map(r => {
+            return r.results.map(objData => ({
+                id                : objData.id,
+                nombre            : objData.name,
+                estado            : objData.status,
+                especie           : objData.species,
+                tipo              : objData.type,
+                genero            : objData.gender,
+                origen            : objData.origin?.name,
+                ubicacionActual   : objData.location?.name,
+                cantidadEpisodios : objData.episode.length,
+                imagen            : objData.image
+            }))
+        }).reduce((acc, curr) => acc.concat(curr), []);
+        return characters;
     } catch (error) {
         console.error(`Fetch fallo: ${error}`);
     }
 }
 
-normalizar();
+let characters = await normalizar();
+console.log(characters[0]);
+console.log(characters[characters.length-1]);
+console.log(characters.length)
