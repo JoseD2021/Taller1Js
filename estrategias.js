@@ -1,24 +1,28 @@
-// fetch("https://rickandmortyapi.com/api/character?page=43")
+const mainUrl = "https://rickandmortyapi.com/api/character";
 
-async function consultarPaginasE1() {
-    let paginas = [];
-    for (let i = 1; i < 43; i++){
-        const response = await fetch(`https://rickandmortyapi.com/api/character?page=${i}`);
-        // .then(response => response.json())
-        // .then(data => console.log(data));
-        try {
-            const data = await response.json();
-            paginas.push(data);
-        } catch (error) {
-            console.log("Error");
-            console.log(response);
-        }
-        
-    }
-    return paginas;
+async function totalPaginas() {
+  const response = await fetch(mainUrl);
+  const data = await response.json();
+  return data.info.pages;
 }
 
-console.log(await consultarPaginasE1());
+async function consultarPaginasE1(tPaginas) {
+  let paginas = [];
+  for (let i = 1; i <= tPaginas; i++) {
+    const response = await fetch(`https://rickandmortyapi.com/api/character?page=${i}`);
+    try {
+      const data = await response.json();
+      paginas.push(data);
+    } catch (error) {
+      console.log("Error " + response.status);
+    }
+  }
+  return paginas;
+}
+
+totalPaginas()
+  .then(total => consultarPaginasE1(total))
+  .then(pag => console.log(pag));
 
 /* { // ejemplo de pagina
   info: {
