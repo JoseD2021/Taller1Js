@@ -20,8 +20,30 @@ async function consultarPaginasE1(tPaginas) {
   return paginas;
 }
 
-totalPaginas()
+async function consultarPaginasE2(tPaginas) {
+  // creacion de urls 
+  const promesas = Array(tPaginas).fill(mainUrl).map((url, i) => fetch(`${url}?page=${i+1}`));
+  let respuestas;
+  // consulta de paginas
+  try {
+    respuestas = await Promise.all(promesas);
+  } catch (error) {
+    console.error("No se completo la consulta de las paginas");
+    return
+  }
+  // datos a json
+  const datos = await Promise.all(
+    respuestas.map(async r => {try {return await r.json()} catch {return }}) // evitar que un error de una respuesta (error 429) rompa todo el json
+  );
+  return datos;
+}
+
+await totalPaginas()
   .then(total => consultarPaginasE1(total))
+  .then(pag => console.log(pag));
+
+totalPaginas()
+  .then(total => consultarPaginasE2(total))
   .then(pag => console.log(pag));
 
 /* { // ejemplo de pagina
