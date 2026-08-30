@@ -1,83 +1,78 @@
 async function findAllCharacters() {
-    let res = await fetch(`https://rickandmortyapi.com/api/character`);
-    let allChars = await res.json();
+    try {
+        let res = await fetch(`https://rickandmortyapi.com/api/character`);
+        let allChars = await res.json();
 
-    let { pages } = allChars.info;
+        let { pages } = allChars.info;
 
-    let response = allChars.results;
+        let response = allChars.results;
 
-    for (let i = 2; i <= pages; i++) {
-        fetch(`https://rickandmortyapi.com/api/character?page=${i}`)
-            .then(res => res.json())
-            .then(res => response.concat(res.results))
-            .catch(e => console.error(e))
+        for (let i = 2; i <= pages; i++) {
+            console.log("Obteniendo información de la página " + i);
+            fetch(`https://rickandmortyapi.com/api/character?page=${i}`)
+                .then(res => res.json())
+                .then(res => response.concat(res.results))
+                .catch(e => console.error("No se pudo obtener la información de la página " + i, e));
+        }
+
+        return response;
+    } catch (e) {
+        console.error("No se pudo obtener la información de los personajes", e);
+
+        return [];
     }
 
-    return response;
 }
 
-async function findAlive() {
-    let allChars = await findAllCharacters();
+function findAlive(allChars = []) {
     let alive = allChars.filter(x => x.status.toUpperCase() == "ALIVE");
 
     return alive;
 }
 
-async function moreThan20() {
-    let allChars = await findAllCharacters();
 
+function moreThan20(allChars = []) {
     return allChars.filter(x => x.episode.length >= 20);
 }
 
-async function alienFemale() {
-    let allChars = await findAllCharacters();
-
+function alienFemale(allChars = []) {
     return allChars.find(x => x.species.toUpperCase() == "ALIEN" && x.gender.toUpperCase() == "FEMALE");
 }
 
-async function someType() {
-    let allChars = await findAllCharacters();
-
+function someType(allChars = []) {
     return allChars.some(x => x.type && x.type.length > 0);
 }
 
-async function hasImageAndEpisode() {
-    let allChars = await findAllCharacters();
-
+function hasImageAndEpisode(allChars = []) {
     return allChars.every(x => x.image && x.image.length > 0 && x.episode.length > 0);
 }
 
-async function groupCharacters() {
-    let allChars = await findAllCharacters();
+let allChars = findAllCharacters()
+    .then(allChars => {
+        console.log("Se encontraron " + allChars.length + " personajes en total");
+        let alive = findAlive(allChars);
+        let moreThan20Episodes = moreThan20(allChars);
+        let alienFemaleChar = alienFemale(allChars);
+        let someTypeChar = someType(allChars);
+        let hasImageAndEpisodeChar = hasImageAndEpisode(allChars);
 
-    return allChars.reduce((acc, actual) => {
-        return acc;
-    }, {})
-}
+        console.log("TODOS LOS PERSONAJES VIVOS:")
+        console.log(alive)
 
-findAlive().then(r => {
-    console.log("TODOS LOS PERSONAJES VIVOS:")
-    console.log(r)
-});
+        console.log("------------------------------------------------")
+        console.log("TODOS LOS PERSONAJES QUE APARECEN EN 20 O MÁS EPISODIOS:")
+        console.log(moreThan20Episodes)
 
-moreThan20().then(r => {
-    console.log("TODOS LOS PERSONAJES QUE APARECEN EN 20 O MÁS EPISODIOS:")
-    console.log(r)
-});
+        console.log("------------------------------------------------")
+        console.log("PRIMER PERSONAJE ALIEN Y FEMALE:")
+        console.log(alienFemaleChar)
 
-alienFemale().then(r => {
-    console.log("PRIMER PERSONAJE ALIEN Y FEMALE:")
-    console.log(r)
-});
+        console.log("------------------------------------------------")
+        console.log("Existe al menos un personaje cuyo campo type tenga información?:")
+        console.log(someTypeChar)
 
-someType().then(r => {
-    console.log("Existe al menos un personaje cuyo campo type tenga información?:")
-    console.log(r)
-});
-
-hasImageAndEpisode().then(r => {
-    console.log("Todos los personajes tienen imagen y aparecen en algun episodio?:")
-    console.log(r)
-});
-
-
+        console.log("------------------------------------------------")
+        console.log("Todos los personajes tienen imagen y aparecen en algun episodio?:")
+        console.log(hasImageAndEpisodeChar)
+    })
+    .catch(e => console.error("No se pudo obtener la información de los personajes", e));
