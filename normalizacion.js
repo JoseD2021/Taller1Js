@@ -51,7 +51,7 @@ export async function normalizar() {
     }
 }
 
-let characters = await normalizar();
+/* let characters = await normalizar();
 console.log(characters[0]);
 console.log(characters[characters.length-1]);
-console.log(characters.length)
+console.log(characters.length) */

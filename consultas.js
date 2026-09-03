@@ -1,69 +1,37 @@
-async function findAllCharacters() {
-    let response = [];
-    try {
-        let res = await fetch(`https://rickandmortyapi.com/api/character`);
-        let allChars = await res.json();
-
-        let { pages } = allChars.info;
-
-        response = response.concat(allChars.results);
-
-        for (let i = 2; i <= pages; i++) {
-            // console.log("Obteniendo información de la página " + i);
-
-            let pageRes = await fetch(`https://rickandmortyapi.com/api/character?page=${i}`);
-
-            if (pageRes.status !== 200) {
-                console.error("No se pudo obtener la información de la página " + i);
-                console.error("Status: " + pageRes.status);
-                console.error(pageRes.statusText);
-                continue;
-            }
-
-            let pageData = await pageRes.json();
-
-            response = response.concat(pageData.results);
-        }
-    } catch (e) {
-        console.error("No se pudo obtener la información de los personajes", e);
-    }
-
-    return response;
-}
+import { normalizar } from "./normalizacion.js";
 
 function findAlive(allChars = []) {
-    let alive = allChars.filter(x => x.status.toUpperCase() == "ALIVE");
+    let alive = allChars.filter(x => x.estado.toUpperCase() == "ALIVE");
 
     return alive;
 }
 
-
 function moreThan20(allChars = []) {
-    return allChars.filter(x => x.episode.length >= 20);
+    return allChars.filter(x => x.cantidadEpisodios >= 20);
 }
 
 function alienFemale(allChars = []) {
-    return allChars.find(x => x.species.toUpperCase() == "ALIEN" && x.gender.toUpperCase() == "FEMALE");
+    return allChars.find(x => x.especie.toUpperCase() == "ALIEN" && x.genero.toUpperCase() == "FEMALE");
 }
 
 function someType(allChars = []) {
-    return allChars.some(x => x.type && x.type.length > 0);
+    return allChars.some(x => x.tipo && x.tipo.length > 0);
 }
 
 function hasImageAndEpisode(allChars = []) {
-    return allChars.every(x => x.image && x.image.length > 0 && x.episode.length > 0);
+    return allChars.every(x => x.imagen && x.imagen.length > 0 && x.cantidadEpisodios > 0);
 }
 
 function groupCharacters(allChars = []) {
     let reduced = allChars.reduce((acc, actual) => {
-        acc[actual.species] = acc[actual.species] || { cantidad: 0, totalEpisodios: 0, promedioEpisodios: 0, vivos: 0 };
+        acc[actual.especie] = acc[actual.especie] || { cantidad: 0, totalEpisodios: 0, promedioEpisodios: 0, vivos: 0 };
 
-        let accActual = acc[actual.species];
+        let accActual = acc[actual.especie];
 
         accActual.cantidad += 1;
-        accActual.totalEpisodios += actual.episode.length;
+        accActual.totalEpisodios += actual.cantidadEpisodios;
         accActual.promedioEpisodios = accActual.totalEpisodios / accActual.cantidad;
-        accActual.vivos += actual.status.toUpperCase() == "ALIVE" ? 1 : 0;
+        accActual.vivos += actual.estado.toUpperCase() == "ALIVE" ? 1 : 0;
 
         return acc;
     }, {});
@@ -78,7 +46,7 @@ function groupCharacters(allChars = []) {
 
 function groupByEpisodes(allChars = []) {
     return allChars.reduce((acc, actual) => {
-        let episodes = actual.episode.length;
+        let episodes = actual.cantidadEpisodios;
 
         if (episodes >= 1 && episodes <= 5) {
             acc["1-5"] += 1;
@@ -94,7 +62,8 @@ function groupByEpisodes(allChars = []) {
     }, { "1-5": 0, "6-15": 0, "16-30": 0, "30+": 0 })
 }
 
-let allChars = findAllCharacters()
+// prueba interna, eliminar al finalizar
+normalizar()
     .then(allChars => {
         console.log("------------------------------------------------")
         console.log("Se encontraron " + allChars.length + " personajes en total");
