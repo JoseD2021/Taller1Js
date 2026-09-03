@@ -3,7 +3,7 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function normalizar() {
+export async function normalizar() {
     let mainUrl = "https://rickandmortyapi.com/api/character/";
     try {
         const response = await fetch(mainUrl);
