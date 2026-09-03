@@ -1,5 +1,5 @@
 function findAlive(allChars = []) {
-    return allChars.filter(x => x.estado.toUpperCase() == "ALIVE");
+    return allChars.filter(x => x.estado.toUpperCase() == "ALIVE" && x.especie.toUpperCase() === "HUMAN");
 }
 
 function moreThan20(allChars = []) {
@@ -71,7 +71,7 @@ export function consultas(allChars = []) {
     let groupedByEpisodes = groupByEpisodes(allChars);
 
     console.log("------------------------------------------------")
-    console.log(`PERSONAJES VIVOS (${alive.length})`)
+    console.log(`PERSONAJES VIVOS HUMANOS (${alive.length})`)
     console.log(alive)
 
     console.log("------------------------------------------------")
