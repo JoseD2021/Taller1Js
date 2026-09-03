@@ -1,9 +1,5 @@
-import { normalizar } from "./normalizacion.js";
-
 function findAlive(allChars = []) {
-    let alive = allChars.filter(x => x.estado.toUpperCase() == "ALIVE");
-
-    return alive;
+    return allChars.filter(x => x.estado.toUpperCase() == "ALIVE");
 }
 
 function moreThan20(allChars = []) {
@@ -62,45 +58,43 @@ function groupByEpisodes(allChars = []) {
     }, { "1-5": 0, "6-15": 0, "16-30": 0, "30+": 0 })
 }
 
-// prueba interna, eliminar al finalizar
-normalizar()
-    .then(allChars => {
-        console.log("------------------------------------------------")
-        console.log("Se encontraron " + allChars.length + " personajes en total");
-        let alive = findAlive(allChars);
-        let moreThan20Episodes = moreThan20(allChars);
-        let alienFemaleChar = alienFemale(allChars);
-        let someTypeChar = someType(allChars);
-        let hasImageAndEpisodeChar = hasImageAndEpisode(allChars);
-        let groupedCharacters = groupCharacters(allChars);
-        let groupedByEpisodes = groupByEpisodes(allChars);
+export function consultas(allChars = []) {
+    console.log("------------------------------------------------")
+    console.log("Hay " + allChars.length + " personajes en total");
 
-        console.log("------------------------------------------------")
-        console.log(`PERSONAJES VIVOS (${alive.length})`)
-        console.log(alive)
+    let alive = findAlive(allChars);
+    let moreThan20Episodes = moreThan20(allChars);
+    let alienFemaleChar = alienFemale(allChars);
+    let someTypeChar = someType(allChars);
+    let hasImageAndEpisodeChar = hasImageAndEpisode(allChars);
+    let groupedCharacters = groupCharacters(allChars);
+    let groupedByEpisodes = groupByEpisodes(allChars);
 
-        console.log("------------------------------------------------")
-        console.log(`PERSONAJES QUE APARECEN EN 20 O MÁS EPISODIOS (${moreThan20Episodes.length})`)
-        console.log(moreThan20Episodes)
+    console.log("------------------------------------------------")
+    console.log(`PERSONAJES VIVOS (${alive.length})`)
+    console.log(alive)
 
-        console.log("------------------------------------------------")
-        console.log("PRIMER PERSONAJE ALIEN Y FEMALE:")
-        console.log(alienFemaleChar)
+    console.log("------------------------------------------------")
+    console.log(`PERSONAJES QUE APARECEN EN 20 O MÁS EPISODIOS (${moreThan20Episodes.length})`)
+    console.log(moreThan20Episodes)
 
-        console.log("------------------------------------------------")
-        console.log("Existe al menos un personaje cuyo campo type tenga información?:")
-        console.log(someTypeChar)
+    console.log("------------------------------------------------")
+    console.log("PRIMER PERSONAJE ALIEN Y FEMALE:")
+    console.log(alienFemaleChar)
 
-        console.log("------------------------------------------------")
-        console.log("Todos los personajes tienen imagen y aparecen en algun episodio?:")
-        console.log(hasImageAndEpisodeChar)
+    console.log("------------------------------------------------")
+    console.log("Existe al menos un personaje cuyo campo type tenga información?:")
+    console.log(someTypeChar)
 
-        console.log("------------------------------------------------")
-        console.log("AGRUPACIÓN DE PERSONAJES POR ESPECIE:")
-        console.log(groupedCharacters)
+    console.log("------------------------------------------------")
+    console.log("Todos los personajes tienen imagen y aparecen en algun episodio?:")
+    console.log(hasImageAndEpisodeChar)
 
-        console.log("------------------------------------------------")
-        console.log("AGRUPACIÓN DE PERSONAJES POR CANTIDAD DE EPISODIOS:")
-        console.log(groupedByEpisodes)
-    })
-    .catch(e => console.error("No se pudo obtener la información de los personajes", e));
+    console.log("------------------------------------------------")
+    console.log("AGRUPACIÓN DE PERSONAJES POR ESPECIE:")
+    console.log(groupedCharacters)
+
+    console.log("------------------------------------------------")
+    console.log("AGRUPACIÓN DE PERSONAJES POR CANTIDAD DE EPISODIOS:")
+    console.log(groupedByEpisodes)
+}
