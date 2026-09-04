@@ -1,6 +1,6 @@
 const mainUrl = "https://rickandmortyapi.com/api/character";
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+import {sleep} from "./normalizacion.js";
 
 async function totalPaginas() {
   const response = await fetch(mainUrl);
@@ -13,7 +13,7 @@ async function consultarPaginasE1(tPaginas) {
   //for (let i = 1; i <= tPaginas; i++) {
   let i = 0;
   while (i <= tPaginas){
-    const response = await fetch(`https://rickandmortyapi.com/api/character?page=${i}`);
+    const response = await fetch(`${mainUrl}?page=${i}`);
     try {
       const data = await response.json();
       paginas.push(data);
@@ -63,7 +63,7 @@ async function consultarPaginasE2(tPaginas) {
 async function consultarPaginasE1Unrestricted(tPaginas) {
   let paginas = [];
   for (let i = 1; i <= tPaginas; i++) {
-    const response = await fetch(`https://rickandmortyapi.com/api/character?page=${i}`);
+    const response = await fetch(`${mainUrl}?page=${i}`);
     try {
       const data = await response.json();
       paginas.push(data);
